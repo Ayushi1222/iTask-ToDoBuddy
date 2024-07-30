@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Todobox from './components/Todobox';
 import Footer from './components/footer'; // Ensure case matches your file
 import HomePage from './components/HomePage';
+import TodoboxURL from './components/ToDoboxURL';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/todo" element={<Todobox />} />
+            <Route path="/todo" element={<TodoboxURL />} />
           </Routes>
         </main>
         <Footer />
