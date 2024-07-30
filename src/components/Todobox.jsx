@@ -1,46 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaSearch, FaChevronDown, FaChevronUp, FaStar } from 'react-icons/fa';
+import dummyData from './dummyData.json';
+// Dummy JSON data
+// const dummyData = [
+//   { id: 1, heading: "Buy groceries", todo: "Get milk, eggs, and bread", isCompleted: false, isImportant: false, lastUpdated: "2024-07-30T10:00:00Z" },
+//   { id: 2, heading: "Finish project", todo: "Complete the React assignment", isCompleted: false, isImportant: true, lastUpdated: "2024-07-29T15:30:00Z" },
+//   { id: 3, heading: "Call mom", todo: "Wish her happy birthday", isCompleted: true, isImportant: false, lastUpdated: "2024-07-28T18:45:00Z" },
+// ];
 
 export default function Todobox() {
-
   const [todo, setTodo] = useState("");
   const [todoHeading, setTodoHeading] = useState("");
   const [todos, setTodos] = useState([]);
-  const [showFinished, setShowFinished] = useState(false);
+  const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [expandedItems, setExpandedItems] = useState({});
 
   useEffect(() => {
-    const todoString = localStorage.getItem("todos");
-    if (todoString) {
-      const parsedTodos = JSON.parse(todoString);
-      setTodos(parsedTodos);
-    }
+    // Load data from dummy JSON
+    setTodos(dummyData);
   }, []);
 
-  const saveToLS = () => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  };
-
   const handleAdd = () => {
-    setTodos([...todos, { todo, heading: todoHeading, isCompleted: false }]);
+    const newTodo = {
+      id: todos.length + 1,
+      heading: todoHeading,
+      todo: todo,
+      isCompleted: false,
+      isImportant: false,
+      lastUpdated: new Date().toISOString()
+    };
+    setTodos([...todos, newTodo]);
     setTodo("");
     setTodoHeading("");
-    saveToLS();
   };
 
-  const handleEdit = (e, i) => {
-    const editTodo = todos.find((_, ind) => ind === i);
+  const handleEdit = (id) => {
+    const editTodo = todos.find(item => item.id === id);
     setTodo(editTodo.todo);
     setTodoHeading(editTodo.heading);
-    const newTodos = todos.filter((_, ind) => ind !== i);
+    const newTodos = todos.filter(item => item.id !== id);
     setTodos(newTodos);
-    saveToLS();
   };
 
-  const handleDelete = (i) => {
-    const newTodos = todos.filter((_, ind) => ind !== i);
+  const handleDelete = (id) => {
+    const newTodos = todos.filter(item => item.id !== id);
     setTodos(newTodos);
-    saveToLS();
   };
 
   const handleChange = (e) => {
@@ -51,39 +56,58 @@ export default function Todobox() {
     setTodoHeading(e.target.value);
   };
 
-  const handleCheckBox = (e) => {
-    const id = parseInt(e.target.name);
-    const newTodos = todos.map((item, index) => 
-      index === id ? { ...item, isCompleted: !item.isCompleted } : item
+  const handleCheckBox = (id) => {
+    const newTodos = todos.map(item => 
+      item.id === id ? { ...item, isCompleted: !item.isCompleted, lastUpdated: new Date().toISOString() } : item
     );
     setTodos(newTodos);
-    saveToLS();
-  };
-
-  const toggleFinished = () => {
-    setShowFinished(!showFinished);
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const deleteAllDoneTasks = () => {
-    const newTodos = todos.filter(todo => !todo.isCompleted);
+  const toggleExpand = (id) => {
+    setExpandedItems(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleImportant = (id) => {
+    const newTodos = todos.map(item => 
+      item.id === id ? { ...item, isImportant: !item.isImportant, lastUpdated: new Date().toISOString() } : item
+    );
     setTodos(newTodos);
-    saveToLS();
   };
 
-  const deleteAllTasks = () => {
-    setTodos([]);
-    saveToLS();
+  // const filteredTodos = todos.filter(todo => {
+  //   const matchesSearch = todo.heading.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  //                         todo.todo.toLowerCase().includes(searchTerm.toLowerCase());
+  //   const matchesFilter = filter === "all" || 
+  //                         (filter === "finished" && todo.isCompleted) || 
+  //                         (filter === "notFinished" && !todo.isCompleted);
+  //   return matchesSearch && matchesFilter;
+  // });
+
+  const sortTodos = (todos) => {
+    return todos.sort((a, b) => {
+      if (a.isImportant === b.isImportant) {
+        // If both tasks have the same importance, sort by ID (assuming newer tasks have higher IDs)
+        return b.id - a.id;
+      }
+      // Important tasks come first
+      return a.isImportant ? -1 : 1;
+    });
   };
 
-  const filteredTodos = todos.filter(todo => 
-    (todo.heading?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     todo.todo?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (showFinished || !todo.isCompleted)
-  );  
+  const filteredAndSortedTodos = sortTodos(
+    todos.filter(todo => {
+      const matchesSearch = todo.heading.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            todo.todo.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFilter = filter === "all" || 
+                            (filter === "finished" && todo.isCompleted) || 
+                            (filter === "notFinished" && !todo.isCompleted);
+      return matchesSearch && matchesFilter;
+    })
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-8">
@@ -128,59 +152,68 @@ export default function Todobox() {
           </div>
         </div>
 
-        <div className="mb-4 flex items-center">
+        <div className="mb-4 flex space-x-2">
           <button 
-            onClick={toggleFinished}
-            className={`px-4 py-2 rounded-lg font-semibold ${showFinished ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+            onClick={() => setFilter("all")}
+            className={`px-4 py-2 rounded-lg font-semibold ${filter === "all" ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
           >
-            {showFinished ? 'Hide Finished' : 'Show Finished'}
-          </button>
-        </div>
-
-        <div className="flex justify-between mb-4">
-          <button 
-            onClick={deleteAllDoneTasks} 
-            className="w-[48%] bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
-          >
-            Delete Done Tasks
+            Show All
           </button>
           <button 
-            onClick={deleteAllTasks} 
-            className="w-[48%] bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setFilter("finished")}
+            className={`px-4 py-2 rounded-lg font-semibold ${filter === "finished" ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
           >
-            Delete All Tasks
+            Show Finished
+          </button>
+          <button 
+            onClick={() => setFilter("notFinished")}
+            className={`px-4 py-2 rounded-lg font-semibold ${filter === "notFinished" ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          >
+            Show Not Finished
           </button>
         </div>
 
         <div className="space-y-4">
-          {filteredTodos.length === 0 && <div className="text-gray-500 italic">No tasks found.</div>}
-          {filteredTodos.map((item, i) => (
-            <div key={i} className="bg-blue-50 p-3 rounded-lg shadow">
+          {filteredAndSortedTodos.length === 0 && <div className="text-gray-500 italic">No tasks found.</div>}
+          {filteredAndSortedTodos.map((item) => (
+            <div key={item.id} className="bg-blue-50 p-3 rounded-lg shadow">
               <div className="flex items-center mb-2">
                 <input 
-                  name={i.toString()} 
-                  onChange={handleCheckBox} 
+                  onChange={() => handleCheckBox(item.id)} 
                   type="checkbox" 
                   checked={item.isCompleted} 
                   className="mr-3"
                 />
-                <h3 className={`font-semibold ${item.isCompleted ? "line-through text-gray-500" : "text-blue-800"}`}>
+                <h3 className={`font-semibold flex-grow ${item.isCompleted ? "line-through text-gray-500" : "text-blue-800"}`}>
                   {item.heading}
                 </h3>
+                <button 
+                  onClick={() => toggleImportant(item.id)} 
+                  className={`mr-2 ${item.isImportant ? "text-yellow-500" : "text-gray-400"}`}
+                >
+                  <FaStar />
+                </button>
+                <button onClick={() => toggleExpand(item.id)}>
+                  {expandedItems[item.id] ? <FaChevronUp /> : <FaChevronDown />}
+                </button>
               </div>
-              <div className="flex items-center">
-                <div className={`flex-grow ${item.isCompleted ? "line-through text-gray-500" : "text-gray-800"}`}>
-                  {item.todo}
+              {expandedItems[item.id] && (
+                <div className="mt-2 text-sm text-gray-600">
+                  <p>{item.todo}</p>
+                  <p className="mt-1">Last updated: {new Date(item.lastUpdated).toLocaleString()}</p>
                 </div>
+              )}
+              <div className="flex items-center mt-2">
+                <div className="flex-grow"></div>
                 <div className="flex space-x-2">
                   <button 
-                    onClick={(e) => handleEdit(e, i)} 
+                    onClick={() => handleEdit(item.id)} 
                     className='text-blue-600 hover:text-blue-800'
                   >
                     <FaEdit />
                   </button>
                   <button 
-                    onClick={() => handleDelete(i)} 
+                    onClick={() => handleDelete(item.id)} 
                     className='text-red-600 hover:text-red-800'
                   >
                     <FaTrash />
