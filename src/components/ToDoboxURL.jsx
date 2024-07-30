@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaSearch, FaChevronDown, FaChevronUp, FaStar } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
-import dummyData from './dummyData.json';
+import dummyData from '../dummyData.json';
 
 export default function Todobox() {
   // State declarations

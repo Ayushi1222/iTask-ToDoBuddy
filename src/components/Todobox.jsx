@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaSearch, FaChevronDown, FaChevronUp, FaStar } from 'react-icons/fa';
-import dummyData from './dummyData.json';
+import dummyData from '../dummyData.json';
 
 
 export default function Todobox() {
