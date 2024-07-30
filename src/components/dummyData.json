@@ -1,0 +1,26 @@
+[
+    {
+      "id": 1,
+      "heading": "Buy groceries",
+      "todo": "Get milk, eggs, and bread",
+      "isCompleted": false,
+      "isImportant": false,
+      "lastUpdated": "2024-07-30T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "heading": "Finish project",
+      "todo": "Complete the React assignment",
+      "isCompleted": false,
+      "isImportant": true,
+      "lastUpdated": "2024-07-29T15:30:00Z"
+    },
+    {
+      "id": 3,
+      "heading": "Call mom",
+      "todo": "Wish her happy birthday",
+      "isCompleted": true,
+      "isImportant": false,
+      "lastUpdated": "2024-07-28T18:45:00Z"
+    }
+  ]
