@@ -1,5 +1,12 @@
 # iTask To-Do App
 ## You can see the Deployed project over here : https://itask-my-todo-buddy.vercel.app/
+
+### Home Page
+![Screenshot 2024-07-30 200152](https://github.com/user-attachments/assets/7be9596b-0cc2-466d-b5ee-c5cc3dc2317b)
+
+### TODO Page
+![Screenshot 2024-07-30 200457](https://github.com/user-attachments/assets/18a410f3-bc6d-45fb-a53f-91328e03c145)
+
 ## Overview
 iTask is a Todo List application built using React, designed to help users manage their tasks efficiently. The app provides functionalities for adding, editing, completing, and searching tasks. It uses a dummy JSON file as a data repository and displays tasks in an expandable list format, showcasing details such as descriptions and timestamps of the last updates.
 
