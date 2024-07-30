@@ -20,7 +20,6 @@ Mark as Done: Users can mark tasks as completed, distinguishing them from active
 Search Tasks: Users can search for specific tasks using keywords.
 Expandable List: Tasks are displayed in an expandable list format, revealing a description and the timestamp of the last update when expanded.
 ### Additional Features
-Server-Side Rendering (SSR): Not applicable as the project does not utilize Next.js.
 URL Parameters: Search functionality is managed using URL parameters, allowing for direct linking to filtered task views.
 Good Styling and Alignment: The application features a user-friendly interface with visually appealing styling and alignment.
 ## System Design
@@ -64,22 +63,14 @@ Users can directly navigate to specific filtered views by modifying the URL para
 # How to Run the Project
 ## Clone the repository:
 
-bash
-Copy code
 git clone https://github.com/your-username/iTask-ToDo-App.git
 cd iTask-ToDo-App
+
 ## Install dependencies:
 
-bash
-Copy code
-npm install
-## Start the development server:
-bash
-Copy code
-npm start
-The app will run on http://localhost:3000.
+(npm install)
 
-bash
-Copy code
-npm start
+## Start the development server:
+
+(npm start)
 The app will run on http://localhost:3000.
